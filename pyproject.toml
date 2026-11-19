@@ -21,6 +21,8 @@ dev = [
 [tool.ruff]
 target-version = "py312"
 line-length = 100
+# So isort treats overcalc_* packages as first-party (default src misses services/*/src).
+src = ["services/*/src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "TID", "ASYNC", "RUF"]

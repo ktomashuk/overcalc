@@ -16,11 +16,18 @@ jobs:
   # Job id `check` is the required status check on main. Renaming it breaks branch protection.
   check:
     runs-on: ubuntu-latest
+    env:
+      # Fail if uv.lock doesn't match pyproject.toml, including inside every `uv run`.
+      # (--frozen alone would let `uv run` silently re-lock on the runner.)
+      UV_LOCKED: "1"
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.3
         with:
           version: "0.13.9"
           enable-cache: true
-      - run: uv sync --frozen
+      - run: uv sync --locked
       - run: make lint typecheck arch test
+      # Hooks with no other CI backstop (detect-private-key, yaml/toml, whitespace).
+      # CI is the final authority, so --no-verify commits can't skip them.
+      - run: uv run pre-commit run --all-files --show-diff-on-failure
