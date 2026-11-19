@@ -1,2 +1,21 @@
+# Secrets: the bot token lives here. Never commit it.
 /.claude/settings.local.json
+
+# Agent worktrees and plan-execution scratch
+/.claude/worktrees/
 /.worktrees/
+/.superpowers/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.import_linter_cache/
+.coverage
+htmlcov/
+dist/
+build/
