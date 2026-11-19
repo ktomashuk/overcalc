@@ -1,0 +1,21 @@
+# Virtual workspace root: no [project] here. Each service under services/ is a workspace member
+# with its own pyproject.toml; shared dev tooling and tool configs live in this file.
+
+[tool.uv.workspace]
+members = ["services/*"]
+
+[tool.uv.sources]
+overcalc-calculation = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "overcalc-calculation",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["integration: needs Docker (Testcontainers)"]
+addopts = "--strict-markers"
