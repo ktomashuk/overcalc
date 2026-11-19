@@ -9,10 +9,28 @@ overcalc-calculation = { workspace = true }
 
 [dependency-groups]
 dev = [
+    "import-linter>=2.17",
+    "mypy>=2.4.1",
     "overcalc-calculation",
     "pytest>=9.2.0",
     "pytest-asyncio>=1.5.0",
+    "ruff>=0.17.6",
 ]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "TID", "ASYNC", "RUF"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+# ARCHITECTURE.md §6: no relative imports beyond the same package.
+ban-relative-imports = "parents"
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
