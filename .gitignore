@@ -1,5 +1,5 @@
 # Secrets: the bot token lives here. Never commit it.
-/.claude/settings.local.json
+**/.claude/settings.local.json
 
 # Agent worktrees and plan-execution scratch
 /.claude/worktrees/
