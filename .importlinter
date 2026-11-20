@@ -1,0 +1,45 @@
+[importlinter]
+root_packages =
+    overcalc_calculation
+include_external_packages = True
+
+[importlinter:contract:calculation-layers]
+name = calculation: layered architecture
+type = layers
+layers =
+    overcalc_calculation.presentation
+    overcalc_calculation.infrastructure
+    overcalc_calculation.application
+    overcalc_calculation.domain
+
+[importlinter:contract:calculation-infra-only-ports]
+name = calculation: infrastructure only sees application.interfaces
+type = forbidden
+source_modules =
+    overcalc_calculation.infrastructure
+forbidden_modules =
+    overcalc_calculation.application.use_cases
+    overcalc_calculation.application.dto
+
+[importlinter:contract:calculation-pure-domain]
+name = calculation: domain is pure
+type = forbidden
+source_modules =
+    overcalc_calculation.domain
+    overcalc_calculation.application
+forbidden_modules =
+    pydantic
+    sqlalchemy
+    fastapi
+    aiokafka
+    httpx
+    overcalc_contracts
+    overcalc_platform
+
+[importlinter:contract:calculation-infra-no-web]
+name = calculation: infrastructure has no web framework
+type = forbidden
+source_modules =
+    overcalc_calculation.infrastructure
+forbidden_modules =
+    fastapi

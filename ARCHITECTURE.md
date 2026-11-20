@@ -268,6 +268,14 @@ forbidden_modules =
     httpx
     overcalc_contracts
     overcalc_platform
+
+[importlinter:contract:calculation-infra-no-web]
+name = calculation: infrastructure has no web framework
+type = forbidden
+source_modules =
+    overcalc_calculation.infrastructure
+forbidden_modules =
+    fastapi
 ```
 
   (Repeat per service. Once there are several, a small script generates the file.)

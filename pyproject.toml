@@ -1,0 +1,42 @@
+# Virtual workspace root: no [project] here. Each service under services/ is a workspace member
+# with its own pyproject.toml; shared dev tooling and tool configs live in this file.
+
+[tool.uv.workspace]
+members = ["services/*"]
+
+[tool.uv.sources]
+overcalc-calculation = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "import-linter>=2.17",
+    "mypy>=2.4.1",
+    "overcalc-calculation",
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+    "ruff>=0.17.6",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+# So isort treats overcalc_* packages as first-party (default src misses services/*/src).
+src = ["services/*/src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "TID", "ASYNC", "RUF"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+# ARCHITECTURE.md §6: no relative imports beyond the same package.
+ban-relative-imports = "parents"
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["integration: needs Docker (Testcontainers)"]
+addopts = "--strict-markers"
