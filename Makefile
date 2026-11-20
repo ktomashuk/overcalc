@@ -11,6 +11,7 @@ lint:
 # packages named `tests`, which mypy would report as duplicate modules in a single run.
 typecheck:
 	cd services/calculation && uv run mypy src tests
+	uv run mypy tests
 
 arch:
 	uv run lint-imports
@@ -19,3 +20,4 @@ arch:
 # (collecting several `tests` packages in one pytest run makes their module names clash).
 test:
 	uv run pytest services/calculation/tests
+	uv run pytest tests/harness
