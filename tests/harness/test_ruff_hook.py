@@ -32,6 +32,15 @@ def test_formats_edited_python_file(tmp_path: Path) -> None:
     assert target.read_text() == "x = 1\n"
 
 
+def test_fixed_file_is_also_formatted(tmp_path: Path) -> None:
+    # Fixes (here F401 dropping the import) can leave formatting debris, so format must run last.
+    target = tmp_path / "mod.py"
+    target.write_text("import os\nx=1\n")
+    result = _run(_payload(target))
+    assert result.returncode == 0, result.stderr
+    assert target.read_text() == "x = 1\n"
+
+
 def test_ignores_non_python_file(tmp_path: Path) -> None:
     target = tmp_path / "notes.md"
     target.write_text("x=1\n")

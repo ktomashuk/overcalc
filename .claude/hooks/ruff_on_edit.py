@@ -63,13 +63,17 @@ def main() -> int:
         return 0
     root = _repo_root(path)
     try:
-        for args in (("format", str(path)), ("check", "--fix", str(path))):
-            result = _ruff(root, *args)
-            if result.returncode != 0:
-                print(result.stdout + result.stderr, file=sys.stderr)
-                return 2
+        # Fix first, format last: fixes (e.g. F401 removing an import) can leave formatting
+        # debris. Format runs even when unfixable findings remain, so the file is always tidy.
+        check = _ruff(root, "check", "--fix", str(path))
+        fmt = _ruff(root, "format", str(path))
     except (OSError, subprocess.TimeoutExpired) as exc:
         print(f"ruff_on_edit: could not run ruff ({exc}), skipping", file=sys.stderr)
+        return 0
+    failed = [r for r in (check, fmt) if r.returncode != 0]
+    if failed:
+        print("".join(r.stdout + r.stderr for r in failed), file=sys.stderr)
+        return 2
     return 0
 
 
