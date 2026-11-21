@@ -1,0 +1,32 @@
+# Core stack: Postgres + calculation. Optional services come later as profiles.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: calculation
+      POSTGRES_USER: overcalc
+      POSTGRES_PASSWORD: overcalc
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U overcalc -d calculation"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+  calculation:
+    build:
+      context: .
+      dockerfile: services/calculation/Dockerfile
+    environment:
+      OVERCALC_DATABASE_URL: postgresql+asyncpg://overcalc:overcalc@postgres:5432/calculation
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    healthcheck:
+      # python:3.12-slim has no curl; urlopen raises on 503, so unready = unhealthy.
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=3)"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
