@@ -17,14 +17,20 @@ Requires [uv](https://docs.astral.sh/uv/) and Python 3.12.
 ```sh
 uv sync                       # create .venv with all workspace members and dev tools
 uv run pre-commit install     # git hooks: ruff, mypy, import-linter, commit-message lint
-make check                    # lint + typecheck + import contracts + tests (same as CI)
+make check                    # lint + typecheck + import contracts + tests + e2e (same as CI)
+make e2e                      # docker compose stack + tests/e2e, then teardown (needs Docker)
 ```
+
+`docker compose up --build` runs the core stack (Postgres + calculation on :8000).
+`GET /health/ready` answers `200` when the service reaches its database, `503` otherwise.
 
 ## Layout
 
 | Path | What it is |
 |---|---|
 | `services/calculation/` | The calculation service (`overcalc_calculation`): `domain`, `application`, `infrastructure` and `presentation` layers |
+| `compose.yaml` | Core stack for local runs and E2E: Postgres + calculation |
+| `tests/e2e/` | Acceptance tests, run with httpx against the compose stack (`make e2e`) |
 | `tests/harness/` | Tests for the harness itself (permissions, hooks, agent definitions) |
 | `.importlinter` | Layer contracts, identical to ARCHITECTURE.md §6 |
 | `docs/superpowers/` | Spec and implementation plans |

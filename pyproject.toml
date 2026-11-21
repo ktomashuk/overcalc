@@ -9,6 +9,8 @@ overcalc-calculation = { workspace = true }
 
 [dependency-groups]
 dev = [
+    "asgi-lifespan>=2.1.0",
+    "httpx>=0.28.1",
     "import-linter>=2.17",
     "mypy>=2.4.1",
     "overcalc-calculation",
@@ -17,6 +19,7 @@ dev = [
     "pytest-asyncio>=1.5.0",
     "pyyaml>=6.0.3",
     "ruff>=0.17.6",
+    "testcontainers[postgres]>=4.15.0",
     "types-pyyaml>=6.0.12.20261113",
 ]
 
@@ -36,6 +39,7 @@ ban-relative-imports = "parents"
 [tool.mypy]
 strict = true
 python_version = "3.12"
+plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

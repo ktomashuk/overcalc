@@ -31,3 +31,19 @@ jobs:
       # Hooks with no other CI backstop (detect-private-key, yaml/toml, whitespace).
       # CI is the final authority, so --no-verify commits can't skip them.
       - run: uv run pre-commit run --all-files --show-diff-on-failure
+
+  # Job id `e2e` becomes a required status check on main after OVC-3. Renaming it breaks branch protection.
+  e2e:
+    needs: check
+    runs-on: ubuntu-latest
+    env:
+      UV_LOCKED: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.9"
+          enable-cache: true
+      - run: uv sync --locked
+      # Brings up docker compose, runs tests/e2e, prints compose logs on failure, always tears down.
+      - run: make e2e

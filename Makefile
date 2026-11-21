@@ -1,7 +1,7 @@
 # One-command checks. CI runs the same targets, so "green locally" means "green in CI".
-.PHONY: check lint typecheck arch test
+.PHONY: check lint typecheck arch test e2e
 
-check: lint typecheck arch test
+check: lint typecheck arch test e2e
 
 lint:
 	uv run ruff check .
@@ -21,3 +21,12 @@ arch:
 test:
 	uv run pytest services/calculation/tests
 	uv run pytest tests/harness
+
+# Full stack in docker compose, then the E2E suite against it. Teardown always runs, and on
+# failure the compose logs are printed first; the target exits with pytest's status.
+e2e:
+	docker compose up -d --build --wait; up=$$?; \
+	if [ $$up -eq 0 ]; then uv run pytest tests/e2e; status=$$?; else status=$$up; fi; \
+	if [ $$status -ne 0 ]; then docker compose logs; fi; \
+	docker compose down -v; \
+	exit $$status

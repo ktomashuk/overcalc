@@ -3,7 +3,13 @@ name = "overcalc-calculation"
 version = "0.1.0"
 description = "Overcalc calculation service (modular monolith in Phases 0-1)."
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "asyncpg>=0.32.0",
+    "fastapi>=0.165.0",
+    "pydantic-settings>=2.16.3",
+    "sqlalchemy[asyncio]>=2.1.9",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [build-system]
 requires = ["uv_build>=0.13.9,<0.14.0"]
