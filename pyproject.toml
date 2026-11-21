@@ -9,6 +9,7 @@ overcalc-calculation = { workspace = true }
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
     "import-linter>=2.17",
     "mypy>=2.4.1",
     "overcalc-calculation",
