@@ -235,6 +235,8 @@ Rules nobody checks get broken. These are enforced in CI:
 root_packages =
     overcalc_calculation
 include_external_packages = True
+contract_types =
+    stdlib_only: tools.importlinter_contracts.stdlib_only.StdlibOnlyContract
 
 [importlinter:contract:calculation-layers]
 name = calculation: layered architecture
@@ -251,8 +253,16 @@ type = forbidden
 source_modules =
     overcalc_calculation.infrastructure
 forbidden_modules =
-    overcalc_calculation.application.use_cases
-    overcalc_calculation.application.dto
+    overcalc_calculation.application
+# `pkg.**` doesn't match `pkg` itself, so each side lists the package and its descendants.
+ignore_imports =
+    overcalc_calculation.infrastructure -> overcalc_calculation.application.interfaces
+    overcalc_calculation.infrastructure -> overcalc_calculation.application.interfaces.**
+    overcalc_calculation.infrastructure.** -> overcalc_calculation.application.interfaces
+    overcalc_calculation.infrastructure.** -> overcalc_calculation.application.interfaces.**
+# Not every ignore line has a matching import at any given time (on main none do yet),
+# and that is fine: they describe what is allowed, not what exists.
+unmatched_ignore_imports_alerting = none
 
 [importlinter:contract:calculation-pure-domain]
 name = calculation: domain is pure
@@ -269,6 +279,14 @@ forbidden_modules =
     overcalc_contracts
     overcalc_platform
 
+[importlinter:contract:calculation-domain-stdlib-only]
+name = calculation: domain imports only the stdlib
+type = stdlib_only
+source_modules =
+    overcalc_calculation.domain
+allowed_modules =
+    overcalc_calculation.domain
+
 [importlinter:contract:calculation-infra-no-web]
 name = calculation: infrastructure has no web framework
 type = forbidden
@@ -279,6 +297,9 @@ forbidden_modules =
 ```
 
   (Repeat per service. Once there are several, a small script generates the file.)
+  `stdlib_only` is a custom contract type (`tools/importlinter_contracts/`): built-in `forbidden`
+  can only deny named packages, so "stdlib only" (§1.2) needs an allowlist. `tests/architecture/`
+  checks each contract against deliberate violations and keeps the block above identical to `.importlinter`.
 - **`ruff`** with `flake8-tidy-imports` to ban relative imports beyond the same package.
 - **`mypy --strict`** so ports and adapters can't drift silently.
 
