@@ -11,7 +11,7 @@ lint:
 # packages named `tests`, which mypy would report as duplicate modules in a single run.
 typecheck:
 	cd services/calculation && uv run mypy src tests
-	uv run mypy tests
+	uv run mypy tests tools
 
 arch:
 	uv run lint-imports
@@ -21,3 +21,4 @@ arch:
 test:
 	uv run pytest services/calculation/tests
 	uv run pytest tests/harness
+	uv run pytest tests/architecture
